@@ -12,6 +12,8 @@ from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 
+from path_utils import resolve_project_path
+
 
 PLY_TYPE_TO_DTYPE = {
     "char": "i1",
@@ -464,17 +466,17 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--point-cloud",
         type=Path,
-        default=Path("/home/zdp/CodeField/tang_swarm_rl/swarm_rl/test/flysite.ply"),
+        default=Path("flysite.ply"),
     )
     parser.add_argument(
         "--bbox-file",
         type=Path,
-        default=Path("/home/zdp/CodeField/tang_swarm_rl/swarm_rl/test/DR_Surface_BBox_Data.txt"),
+        default=Path("DR_Surface_BBox_Data.txt"),
     )
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("/home/zdp/CodeField/tang_swarm_rl/swarm_rl/test/DR_Region_Guidance_Paths.npz"),
+        default=Path("DR_Region_Guidance_Paths.npz"),
     )
     parser.add_argument("--resolution", type=float, default=0.1, help="Voxel resolution in meters.")
     parser.add_argument("--inflate-radius", type=float, default=0.25, help="Obstacle inflation radius in meters.")
@@ -521,6 +523,9 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     args = build_parser().parse_args()
+    args.point_cloud = resolve_project_path(args.point_cloud)
+    args.bbox_file = resolve_project_path(args.bbox_file)
+    args.output = resolve_project_path(args.output)
     t0 = time.time()
 
     print(f"Point cloud : {args.point_cloud}")

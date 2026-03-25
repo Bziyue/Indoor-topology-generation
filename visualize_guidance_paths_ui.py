@@ -11,6 +11,8 @@ from typing import Dict, List, Tuple
 
 import numpy as np
 
+from path_utils import resolve_project_path
+
 
 @dataclass(frozen=True)
 class Region:
@@ -430,23 +432,26 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--mesh",
         type=Path,
-        default=Path("/home/zdp/CodeField/tang_swarm_rl/swarm_rl/test/knife.ply"),
+        default=Path("knife.ply"),
     )
     parser.add_argument(
         "--bbox-file",
         type=Path,
-        default=Path("/home/zdp/CodeField/tang_swarm_rl/swarm_rl/test/DR_Surface_BBox_Data.txt"),
+        default=Path("DR_Surface_BBox_Data.txt"),
     )
     parser.add_argument(
         "--guidance-file",
         type=Path,
-        default=Path("/home/zdp/CodeField/tang_swarm_rl/swarm_rl/test/DR_Region_Guidance_Paths.npz"),
+        default=Path("DR_Region_Guidance_Paths.npz"),
     )
     return parser
 
 
 def main() -> None:
     args = build_parser().parse_args()
+    args.mesh = resolve_project_path(args.mesh)
+    args.bbox_file = resolve_project_path(args.bbox_file)
+    args.guidance_file = resolve_project_path(args.guidance_file)
 
     regions = parse_region_boxes(args.bbox_file)
     directed_paths, region_names = load_region_guidance_paths(str(args.guidance_file))

@@ -10,6 +10,8 @@ from typing import Iterable
 
 import numpy as np
 
+from path_utils import resolve_project_path
+
 
 def build_argparser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
@@ -18,7 +20,7 @@ def build_argparser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--input",
         type=Path,
-        default=Path("test/region_paths_txt/all_region_pair_trajectories.json"),
+        default=Path("region_paths_txt/all_region_pair_trajectories.json"),
         help="Input trajectory JSON exported by voxel_guidance_ros2.",
     )
     parser.add_argument(
@@ -302,6 +304,10 @@ def main() -> None:
 
     if (args.source_id is None) != (args.target_id is None):
         parser.error("--source-id and --target-id must be used together.")
+
+    args.input = resolve_project_path(args.input)
+    if args.output is not None:
+        args.output = resolve_project_path(args.output)
 
     trajectories = load_trajectories(args.input)
     selected = iter_selected_corridors(

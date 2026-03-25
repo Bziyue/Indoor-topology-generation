@@ -8,6 +8,8 @@ import numpy as np
 import trimesh
 from pxr import Gf, Usd, UsdGeom
 
+from path_utils import resolve_project_path
+
 
 def transform_points(points: list[Gf.Vec3f], transform: Gf.Matrix4d) -> np.ndarray:
     transformed: list[list[float]] = []
@@ -74,20 +76,20 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--input",
         type=Path,
-        default=Path(
-            "/home/zdp/CodeField/my_swarm_rl/rl/sru-navigation-sim/isaaclab_nav_task/navigation/assets/data/Environments/StaticScan/DR_static_mesh.usdc"
-        ),
+        default=Path("DR_static_mesh.usdc"),
     )
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("/home/zdp/CodeField/my_swarm_rl/rl/Indoor-topology-generation/DR_static_mesh_collision.ply"),
+        default=Path("DR_static_mesh_collision.ply"),
     )
     return parser
 
 
 def main() -> None:
     args = build_parser().parse_args()
+    args.input = resolve_project_path(args.input)
+    args.output = resolve_project_path(args.output)
     stage = Usd.Stage.Open(str(args.input))
     if stage is None:
         raise RuntimeError(f"Failed to open USD stage: {args.input}")

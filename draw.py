@@ -1,14 +1,21 @@
+from __future__ import annotations
+
+import argparse
 import matplotlib.pyplot as plt
 import numpy as np
 import re
+from pathlib import Path
 
-def parse_and_plot_rectangles(filepath):
+from path_utils import resolve_project_path
+
+
+def parse_and_plot_rectangles(filepath: Path) -> None:
     rectangles = {}
     current_rect = None
 
     # 1. 解析 txt 文件内容
     try:
-        with open(filepath, 'r', encoding='utf-8') as file:
+        with filepath.open('r', encoding='utf-8') as file:
             for line in file:
                 # 匹配矩形名称
                 if line.startswith("Rectangle:"):
@@ -66,6 +73,22 @@ def parse_and_plot_rectangles(filepath):
     print(f"解析完成，共绘制 {len(rectangles)} 个矩形。")
     plt.show()
 
-# 执行函数 (请在此处替换为你保存的 txt 文件路径)
-txt_file_path = "/home/zdp/CodeField/tang_swarm_rl/swarm_rl/test/Surface_BBox_Data.txt" 
-parse_and_plot_rectangles(txt_file_path)
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Plot region rectangles from the bbox txt file.")
+    parser.add_argument(
+        "--input",
+        type=Path,
+        default=Path("DR_Surface_BBox_Data.txt"),
+        help="BBox txt file inside Indoor-topology-generation.",
+    )
+    return parser
+
+
+def main() -> None:
+    args = build_parser().parse_args()
+    parse_and_plot_rectangles(resolve_project_path(args.input))
+
+
+if __name__ == "__main__":
+    main()

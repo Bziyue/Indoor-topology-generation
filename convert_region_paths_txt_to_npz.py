@@ -7,6 +7,8 @@ from typing import Dict, List, Tuple
 
 import numpy as np
 
+from path_utils import resolve_project_path
+
 
 def parse_region_names(bbox_path: Path) -> List[str]:
     region_names: List[str] = []
@@ -94,17 +96,17 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--input",
         type=Path,
-        default=Path("/home/zdp/CodeField/tang_swarm_rl/swarm_rl/test/region_paths_txt/all_region_pair_paths.txt"),
+        default=Path("region_paths_txt/all_region_pair_paths.txt"),
     )
     parser.add_argument(
         "--bbox-file",
         type=Path,
-        default=Path("/home/zdp/CodeField/tang_swarm_rl/swarm_rl/test/DR_Surface_BBox_Data.txt"),
+        default=Path("DR_Surface_BBox_Data.txt"),
     )
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("/home/zdp/CodeField/tang_swarm_rl/swarm_rl/test/DR_Region_Guidance_Paths.npz"),
+        default=Path("DR_Region_Guidance_Paths.npz"),
     )
     parser.add_argument(
         "--save-directed",
@@ -116,6 +118,9 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     args = build_parser().parse_args()
+    args.input = resolve_project_path(args.input)
+    args.bbox_file = resolve_project_path(args.bbox_file)
+    args.output = resolve_project_path(args.output)
     region_names = parse_region_names(args.bbox_file)
     undirected_paths = parse_txt_paths(args.input)
     save_npz(args.output, region_names, undirected_paths, save_directed=args.save_directed)

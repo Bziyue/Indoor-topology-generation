@@ -13,6 +13,8 @@ from typing import Dict, Iterable, List, Tuple
 
 import numpy as np
 
+from path_utils import resolve_project_path
+
 
 @dataclass(frozen=True)
 class Region:
@@ -797,17 +799,17 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--mesh",
         type=Path,
-        default=Path("/home/zdp/CodeField/tang_swarm_rl/swarm_rl/test/knife.ply"),
+        default=Path("knife.ply"),
     )
     parser.add_argument(
         "--bbox-file",
         type=Path,
-        default=Path("/home/zdp/CodeField/tang_swarm_rl/swarm_rl/test/DR_Surface_BBox_Data.txt"),
+        default=Path("DR_Surface_BBox_Data.txt"),
     )
     parser.add_argument(
         "--trajectory-file",
         type=Path,
-        default=Path("/home/zdp/CodeField/tang_swarm_rl/swarm_rl/test/region_paths_txt/all_region_pair_trajectories.json"),
+        default=Path("region_paths_txt/all_region_pair_trajectories.json"),
     )
     parser.add_argument(
         "--samples-per-segment",
@@ -832,6 +834,9 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     args = build_parser().parse_args()
+    args.mesh = resolve_project_path(args.mesh)
+    args.bbox_file = resolve_project_path(args.bbox_file)
+    args.trajectory_file = resolve_project_path(args.trajectory_file)
 
     regions = parse_region_boxes(args.bbox_file)
     trajectory_records = load_trajectory_records(args.trajectory_file)
